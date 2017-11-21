@@ -1,0 +1,49 @@
+Name:Zixing Hao
+Student ID:8192862537
+Final project of EE450
+
+1.What you have done in the assignment?
+A.Build up Tcp and Udp connection in this project
+B.Transfer the input value within four servers to caculate Taylor seriese number, and recv the final result
+
+
+2.What your code files are and what each one of them does?
+
+A.client.c: will handle with input value x, and pass it to aws through TCP connection within port 25537, and sent function identifier to aws
+
+B.aws.c: will recv function identifier and x from client through TCP, and then send x to backserverA,B,C, and recv caculated value from each server
+since Udp is not reliable protocol, it means recv data may be in bad order, so aws will compare their value to identify which
+one is x2,x3,x5. Next send x2 to serverA and serverB through UDP and within static port 24537, and also recv caculated value,
+same as above, comparing their value and identify x4,x6, then with caculator function, got the final result, send it back to client
+through TCP.
+
+C.serverA.c: build Udp connection with aws Udp socket, recv x and x2 then caculate the square value, send back to aws
+
+D.serverB.c: build Udp connection with aws Udp socket, recv x and x2 then caculate the cube value, send back to aws
+
+E.serverC.c: build Udp connection with aws Udp socket, recv x then caculate the 5th power value, send back to aws
+
+
+3.The format of all the message exchanged
+A.client.c:will send int "funcionFlag" to aws first, which 0 stand for LOG and 1 stand for DIV, since TCP connection is reliable protocol, it will be 
+recved by aws firstly. and then client.c will send float "number" the value of x to aws, and recv float "numberRecv" the value of final result
+
+B.aws.c:will firstly recv the int "functionFlag" passed by client, which 0 stand for LOG, 1 stand for DIV, and secondly recv float "numberInput" which 
+stand for value of X, and then send the float "x" to serverA,B,C and recv the caculated value from three servers, with comparing the value to identify 
+which one is float "x2" and send to backserverA,B, and finally recv float "x4,x6", then caculated x1,x2,x3,x4,x5,x6 send float "result" to client
+
+C.serverA:recv float "recv" which was passed from aws, and send after caculating value as float number back to aws
+
+D.serverB:same as serverA
+
+E:serverC:same as serverA
+
+4.The Idiosyncrasy of your project
+
+when run ./client function value, which function should always be "LOG" or "DIV", and as requirement of this project, value should be range of (0,1),
+sometimes if exit zombies process, it will show address is already used, and should kill the zombie process and run
+
+5.Reused Code
+Most part of initializing TCP and UDP, creating sockets, binding the address, setting port and ip address, recv() recvfrom() send() sendto() function..... came
+from Beej's guide line and was edited by me based on Beej's code, and also mention it in the comment line
+	
